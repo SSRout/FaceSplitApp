@@ -1,0 +1,8 @@
+﻿.vscode
+.vs
+bin
+obj
+*.db
+wwwroot
+DevAssets
+Images
