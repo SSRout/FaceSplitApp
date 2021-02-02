@@ -1,6 +1,4 @@
-## 100 Days Of Code
+## Face Spliting App
 
-[Reference link](https://www.udemy.com/course/100-days-of-code/)
-###### Thanks to Angela Yu
 
 **✔️🍺 Happy Coding 👍😊**
