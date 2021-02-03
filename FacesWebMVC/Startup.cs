@@ -1,13 +1,14 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FacesWebMVC.Services;
+using MassTransit;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace FacesWebMVC
 {
@@ -23,6 +24,17 @@ namespace FacesWebMVC
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMassTransit();
+            services.AddSingleton(provider => Bus.Factory.CreateUsingRabbitMq(
+                cfg =>
+                {
+                    cfg.Host("localhost", "/", h => {});
+                    services.AddSingleton<IBus>(provider => provider.GetRequiredService<IBusControl>());
+                    services.AddSingleton<IHostedService, BusService>();
+
+                }));
+
+
             services.AddControllersWithViews();
         }
 
