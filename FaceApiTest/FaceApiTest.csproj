@@ -19,9 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Images\oscars-2017.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Images\people.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
