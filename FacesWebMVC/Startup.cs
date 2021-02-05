@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FacesWebMVC.RestClients;
 using FacesWebMVC.Services;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
@@ -34,7 +35,7 @@ namespace FacesWebMVC
 
                 }));
 
-
+            services.AddHttpClient<IOrderManagementApi, OrderManagementApi>();
             services.AddControllersWithViews();
         }
 

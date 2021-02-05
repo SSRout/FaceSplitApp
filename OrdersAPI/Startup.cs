@@ -27,10 +27,14 @@ namespace OrdersAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<OrdersContext>(options => options.UseSqlServer
-           (
-               Configuration.GetConnectionString("OrdersContextConnection")
-           ));
+            services.AddDbContext<OrdersContext>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("OrdersContextConnection"),
+                sqlServerOptionsAction: sqlOps =>
+                {
+                    sqlOps.EnableRetryOnFailure();
+                });
+            });
 
             services.AddHttpClient();
             services.AddTransient<IOrderRepository, OrderRepository>();
@@ -57,6 +61,17 @@ namespace OrdersAPI
             }));
             services.AddSingleton<IHostedService, BusService>();
 
+          
+            services.AddCors(op =>
+            {
+                op.AddPolicy("CorsPolicy",
+                    builder => builder
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .SetIsOriginAllowed((host) => true)
+                    .AllowCredentials());
+            });
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -74,6 +89,7 @@ namespace OrdersAPI
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "OrdersAPI v1"));
             }
 
+            app.UseCors("CorsPolicy");
             app.UseHttpsRedirection();
 
             app.UseRouting();
