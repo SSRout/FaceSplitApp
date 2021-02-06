@@ -11,7 +11,7 @@ namespace FaceApiTest
     {
         static async Task Main(string[] args)
         {
-            var urlAddress = "http://localhost:8232/api/faces";
+            var urlAddress = "http://localhost:5000/api/faces";
             var imagePath = @"Images/people.jpg";
             ImageUtility imgUtil = new ImageUtility();
             var bytes = imgUtil.ConvertToBytes(imagePath);

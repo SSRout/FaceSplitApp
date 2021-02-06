@@ -1,5 +1,6 @@
 ﻿using MassTransit;
 using MessagingQueue.Commands;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using OrdersApi.Models;
 using OrdersApi.Persistence;
@@ -16,17 +17,18 @@ namespace OrdersAPI.Messages.Consumers
     {
         private readonly IOrderRepository _orderRepo;
         private readonly IHttpClientFactory _clientFactory;
+        private readonly IConfiguration _config;
 
-        public RegisterOrderCommandConsumer(IOrderRepository orderRepo, IHttpClientFactory clientFactory)
+        public RegisterOrderCommandConsumer(IOrderRepository orderRepo, IHttpClientFactory clientFactory, IConfiguration config)
         {
             _orderRepo = orderRepo;
             _clientFactory = clientFactory;
-
+            _config = config;
         }
         public async Task Consume(ConsumeContext<IRegisterOrderCommand> context)
         {
             var result = context.Message;
-            if (result.OrderId != null && result.PictureUrl != null
+            if (result!=null && result.PictureUrl != null
                 && result.UserEmail != null && result.ImageData != null)
             {
                 SaveOrder(result);
@@ -44,7 +46,8 @@ namespace OrdersAPI.Messages.Consumers
             var byteContent = new ByteArrayContent(imageData);
             Tuple<List<byte[]>, Guid> orderDetailData = null;
             byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-            using (var response = await client.PostAsync("http://localhost:5000/api/faces?orderId=" + orderId, byteContent))
+            string apiHostEndpoint = _config.GetSection("ApiServiceLocations").GetValue<string>("FaceApiLocation");
+            using (var response = await client.PostAsync($"http://{apiHostEndpoint}/api/faces?orderId=" + orderId, byteContent))
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
                 orderDetailData = JsonConvert.DeserializeObject<Tuple<List<byte[]>, Guid>>(apiResponse);

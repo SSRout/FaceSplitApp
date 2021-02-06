@@ -1,6 +1,7 @@
 using GreenPipes;
 using MassTransit;
 using MessagingQueue;
+using MessagingQueue.Constants;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -57,7 +58,18 @@ namespace OrdersAPI
 
                 });
 
-                //cfg.ConfigureEndpoints(provider);
+                cfg.ReceiveEndpoint(RabbitMqMassTransitConstant.OrderDispatchedServiceQueue, e =>
+                {
+                    e.PrefetchCount = 16;
+                    e.UseMessageRetry(x => x.Interval(2, 100));
+
+
+                    e.Consumer<OrderDispatchedEventConsumer>(provider);
+                    //  EndpointConvention.Map<OrderDispatchedEvent>(e.InputAddress);
+
+                });
+
+                cfg.ConfigureEndpoints((IBusRegistrationContext)provider);
             }));
             services.AddSingleton<IHostedService, BusService>();
 

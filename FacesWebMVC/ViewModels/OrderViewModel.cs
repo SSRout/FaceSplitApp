@@ -9,22 +9,25 @@ namespace FacesWebMVC.ViewModels
 {
     public class OrderViewModel
     {
-        [Display(Name = "Order Id")]
+        [Display(Name ="Order Id")]
         public Guid OrderId { get; set; }
 
-        [Display(Name = "Email")]
+        [Display(Name ="Email")]
         public string UserEmail { get; set; }
 
-        [Display(Name = "Image File")]
+        [Display(Name ="Image File")]
         public IFormFile File { get; set; }
 
-        [Display(Name = "PictureUrl")]
+        [Display(Name ="PictureUrl")]
         public string PictureUrl { get; set; }
 
-        [Display(Name = "Order Status")]
-        public string StatusString { get; set; }
-
+        [Display(Name ="Order Status")]
+        public string Status { get; set; }
+        
         public byte[] ImageData { get; set; }
+        public string ImageString { get; set; }
+        public List<OrderDetailViewModel> OrderDetails { get; set; }
+
 
     }
 }

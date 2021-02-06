@@ -1,15 +1,13 @@
 ﻿using FacesWebMVC.Models;
 using FacesWebMVC.ViewModels;
 using MassTransit;
-using MessagingQueue;
 using MessagingQueue.Commands;
+using MessagingQueue.Constants;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FacesWebMVC.Controllers
