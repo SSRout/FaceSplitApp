@@ -1,9 +1,9 @@
-﻿ @model List<FacesWebMVC.ViewModels.OrderViewModel>
+﻿@model List<FacesWebMVC.ViewModels.OrderViewModel>
 @{
 
     ViewData["Title"] = "Orders List";
 }
-<h3 >Orders Management - overview</h3>
+<h3>Orders Management - overview</h3>
 <table class="table">
     <thead>
         <tr>
@@ -14,9 +14,9 @@
         </tr>
     </thead>
     <tbody>
-        @foreach(var order in Model)
+        @foreach (var order in Model)
         {
-            <tr class="clickable" onclick="location.href='@(Url.Action("Details","OrderManagement", 
+            <tr class="clickable" onclick="location.href='@(Url.Action("Details","OrderManagement",
                                                           new { orderId =order.OrderId }))'">
                 <td>@order.OrderId</td>
                 <td>@order.UserEmail</td>
@@ -30,3 +30,32 @@
 
 
 </table>
+@section Scripts{
+    <script src="~/lib/signalr/dist/browser/signalr.js"></script>
+    <script type="text/javascript">
+        var timerId;
+        const connection = new SignalR.HubConnectionBuilder()
+            .withUrl('http://localhost:5500/orderhub')
+            .configureLogging(signalR.LogLevel.Information)
+            .withAutomaticReconnect().build();
+
+        connection.on('UpdateOrders', (message, orderId) => {
+            const encodeMsg = message + " : " + orderId;
+            console.log(encodeMsg);
+            if (orderId && orderId.length) {
+                toastr.success(orderId + ' Updated To Status ' + message);
+                refreshPage();
+            }
+        });
+
+        function refreshPage() {
+            clearTimeout(timerId)
+            timerId = setTimeout(function () {
+                window.location.reload();
+            }, 3000)
+        };
+
+        connection.start().catch(err => console.error(err.toString()));
+    </script>
+
+}

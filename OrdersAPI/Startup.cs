@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using OrdersApi.Persistence;
+using OrdersAPI.Hubs;
 using OrdersAPI.Messages.Consumers;
 using OrdersAPI.Services;
 using System;
@@ -36,7 +37,11 @@ namespace OrdersAPI
                     sqlOps.EnableRetryOnFailure();
                 });
             });
-
+            services.AddSignalR()
+                .AddJsonProtocol(ops=>
+                {
+                    ops.PayloadSerializerOptions.PropertyNamingPolicy = null;
+                });
             services.AddHttpClient();
             services.AddTransient<IOrderRepository, OrderRepository>();
 
@@ -111,6 +116,7 @@ namespace OrdersAPI
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<OrderHub>("/orderhub");
             });
         }
     }
